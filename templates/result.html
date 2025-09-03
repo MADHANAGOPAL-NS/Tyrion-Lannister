@@ -1,0 +1,38 @@
+<!-- templates/result.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <div class="logo">DARKCONQ</div>
+  </header>
+  <main class="dashboard">
+    <section class="resume">
+      <h3>Parsed Resume</h3>
+      <pre>{{ resume | tojson(indent=2) }}</pre>
+    </section>
+
+    <section class="history">
+      <h3>Interviews</h3>
+      <ul>
+        {% for it in interviews %}
+          <li>
+            Interview ID: {{ it.id }} | Date: {{ it.date }}
+            <form style="display:inline" method="post" action="/reports/generate">
+              <input type="hidden" name="interview_id" value="{{ it.id }}">
+              <button type="submit">Generate Report</button>
+            </form>
+            <a href="/question/{{ it.id }}/0">Revisit Questions</a>
+          </li>
+        {% else %}
+          <li>No interviews yet</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

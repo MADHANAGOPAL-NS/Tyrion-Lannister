@@ -1,0 +1,20 @@
+/* static/style.css - unified basic styles */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #03008d, #00046b);
+  color: #fff;
+  min-height: 100vh;
+}
+header { display:flex; justify-content:space-between; align-items:center; padding:20px 40px; background:#2b2bc1; }
+.logo { font-family: 'Irish Grover', cursive; font-size:28px; color:#000; }
+a { color: #fff; text-decoration: none; }
+.hero { padding: 60px; text-align: center; }
+.form-page { display:flex; justify-content:center; align-items:center; min-height:70vh; }
+form { background: rgba(255,255,255,0.95); color:#000; padding:24px; border-radius:8px; width:360px; }
+form input, form button { display:block; width:100%; margin-bottom:12px; padding:8px; }
+.container { padding: 40px; max-width:900px; margin: 0 auto; }
+button { cursor:pointer; border:none; border-radius:6px; padding:10px 14px; background:#004d3d; color:white; }
+.dashboard { padding: 30px; display:flex; gap: 30px; }
+.resume, .history { background: rgba(255,255,255,0.95); color: #000; padding:20px; border-radius:8px; width:48%; }
+pre { white-space: pre-wrap; word-wrap: break-word; }

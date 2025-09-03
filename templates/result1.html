@@ -1,0 +1,21 @@
+<!-- templates/result1.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Interview Result</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Interview Summary</h1>
+    <div id="scores">
+      {% for skill, v in skill_map.items() %}
+        <p>{{ skill }}: {{ v.obtained }} / {{ v.total }}</p>
+      {% endfor %}
+      <p>Overall: {{ overall_obtained }} / {{ overall_total }} ({{ overall_pct }}%)</p>
+    </div>
+    <button onclick="window.location.href='/dashboard'">Go to Dashboard</button>
+  </div>
+</body>
+</html>

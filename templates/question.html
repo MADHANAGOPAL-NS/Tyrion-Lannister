@@ -1,0 +1,82 @@
+<!-- templates/question.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Question {{ q_index + 1 }} of {{ total }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Question {{ q_index + 1 }} of {{ total }}</h2>
+    <p id="questionText">{{ question }}</p>
+
+    <button id="startBtn">Start Recording</button>
+    <button id="stopBtn" disabled>Stop</button>
+
+    <p id="status"></p>
+
+    <script>
+      const INTERVIEW_ID = {{ interview_id }};
+      const Q_INDEX = {{ q_index }};
+      const TOTAL = {{ total }};
+      const startBtn = document.getElementById("startBtn");
+      const stopBtn = document.getElementById("stopBtn");
+      const status = document.getElementById("status");
+
+      let mediaRecorder;
+      let audioChunks = [];
+
+      async function initMedia() {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+          mediaRecorder.onstart = () => { audioChunks = []; status.innerText = "Recording..."; startBtn.disabled = true; stopBtn.disabled = false; };
+          mediaRecorder.onstop = async () => {
+            status.innerText = "Uploading...";
+            const blob = new Blob(audioChunks, { type: "audio/webm" });
+            const fd = new FormData();
+            fd.append("file", blob, "answer.webm");
+            fd.append("interview_id", INTERVIEW_ID);
+            fd.append("q_index", Q_INDEX);
+
+            // send token if you have one in localStorage (client must store token after login)
+            const token = localStorage.getItem("access_token");
+            const headers = token ? { "Authorization": "Bearer " + token } : {};
+
+            const resp = await fetch("/stt", { method: "POST", body: fd, headers: headers });
+            const data = await resp.json().catch(() => ({}));
+            status.innerText = data.transcript ? ("Transcribed: " + data.transcript) : "Uploaded";
+
+            // auto-move
+            const nextIndex = Q_INDEX + 1;
+            if (nextIndex < TOTAL) {
+              window.location.href = `/question/${INTERVIEW_ID}/${nextIndex}`;
+            } else {
+              window.location.href = `/result1/${INTERVIEW_ID}`;
+            }
+          };
+        } catch (err) {
+          console.error(err);
+          status.innerText = "Microphone not accessible.";
+          startBtn.disabled = true;
+        }
+      }
+
+      startBtn.onclick = async () => {
+        if (!mediaRecorder) await initMedia();
+        if (mediaRecorder) mediaRecorder.start();
+      };
+
+      stopBtn.onclick = () => {
+        if (mediaRecorder && mediaRecorder.state !== "inactive") {
+          mediaRecorder.stop();
+          startBtn.disabled = false;
+          stopBtn.disabled = true;
+        }
+      };
+    </script>
+  </div>
+</body>
+</html>
